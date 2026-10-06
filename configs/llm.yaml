@@ -1,0 +1,13 @@
+data:
+  train: data/processed/train.csv
+  validation: data/processed/validation.csv
+  test: data/processed/test.csv
+model_name: cointegrated/rubert-tiny2
+output_dir: outputs/models/llm
+metrics_dir: outputs/metrics
+max_length: 256
+epochs: 1
+batch_size: 4
+learning_rate: 0.00002
+weight_decay: 0.01
+seed: 42

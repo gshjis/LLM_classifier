@@ -1,0 +1,11 @@
+data:
+  train: data/processed/train.csv
+  validation: data/processed/validation.csv
+  test: data/processed/test.csv
+output_dir: outputs/models/baselines
+metrics_dir: outputs/metrics
+random_state: 42
+tfidf:
+  max_features: 50000
+  ngram_range: [1, 2]
+  min_df: 1

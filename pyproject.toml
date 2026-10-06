@@ -1,0 +1,34 @@
+[project]
+name = "llm-classifier"
+version = "0.1.0"
+description = "Учебный проект: классификация писем на спам и не спам"
+authors = [{name = "Project contributors"}]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=2.0,<3.0",
+    "pandas>=2.2,<4.0",
+    "scikit-learn>=1.5,<2.0",
+    "joblib>=1.4,<2.0",
+    "PyYAML>=6.0,<7.0",
+    "torch>=2.2,<3.0",
+    "transformers>=4.45,<5.0",
+    "datasets>=3.0,<5.0",
+]
+
+[project.scripts]
+spam-classifier = "llm_classifier.cli:main"
+
+[tool.poetry]
+packages = [{include = "llm_classifier", from = "src"}]
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=8.0,<9.0"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
