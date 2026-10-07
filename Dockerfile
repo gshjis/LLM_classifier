@@ -12,15 +12,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends build-essential
 
 COPY pyproject.toml README.md ./
 # 1) Сначала ставим только зависимости из pyproject.toml (это позволяет лучше кешировать слой при изменениях в коде)
-RUN pip install --upgrade pip \
-    && python - <<'PY'
+RUN pip install --upgrade pip
+
+RUN python - <<'PY'
 import pathlib, tomllib
 
 pyproject = tomllib.loads(pathlib.Path('pyproject.toml').read_text('utf-8'))
 deps = pyproject['project']['dependencies']
 pathlib.Path('/tmp/requirements.txt').write_text('\n'.join(deps), encoding='utf-8')
 PY
-    && pip install -r /tmp/requirements.txt \
+
+RUN pip install -r /tmp/requirements.txt \
     && pip install pytest
 
 # 2) Затем копируем исходники и ставим сам проект (без зависимостей, т.к. они уже установлены)
