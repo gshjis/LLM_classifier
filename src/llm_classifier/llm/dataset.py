@@ -17,6 +17,14 @@ def to_hf_dataset(frame: pd.DataFrame, tokenizer, max_length: int) -> Dataset:
     )
 
     def tokenize(batch):
-        return tokenizer(batch["text"], truncation=True, max_length=max_length)
+        # Trainer uses default_data_collator for this dataset, which expects
+        # fixed-length tensors across the batch. Therefore we pad to
+        # max_length here.
+        return tokenizer(
+            batch["text"],
+            truncation=True,
+            padding="max_length",
+            max_length=max_length,
+        )
 
     return dataset.map(tokenize, batched=True, remove_columns=["text"])
