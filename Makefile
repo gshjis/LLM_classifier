@@ -7,7 +7,7 @@ TEXT ?=
 help:
 	@echo "build                 Build the Docker image"
 	@echo "test                  Run tests in Docker"
-	@echo "prepare-data          Split data/raw/emails.csv"
+	@echo "prepare-data          Split data/raw/spam.csv into train/validation/test"
 	@echo "train-baselines       Train Naive Bayes and Logistic Regression"
 	@echo "evaluate-baselines    Evaluate baseline models on test set"
 	@echo "predict-baseline      Predict with TEXT='...'"
@@ -31,7 +31,7 @@ evaluate-baselines:
 	$(DOCKER_RUN) evaluate-baselines
 
 predict-baseline:
-	@test -n "$(TEXT)" || (echo 'Usage: make predict-baseline TEXT="email text"' && exit 1)
+	@test -n "$(TEXT)" || (echo 'Usage: make predict-baseline TEXT="SMS message"' && exit 1)
 	$(DOCKER_RUN) predict-baseline --text "$(TEXT)"
 
 train-llm:
@@ -41,5 +41,5 @@ evaluate-llm:
 	$(DOCKER_RUN) evaluate-llm
 
 predict-llm:
-	@test -n "$(TEXT)" || (echo 'Usage: make predict-llm TEXT="email text"' && exit 1)
+	@test -n "$(TEXT)" || (echo 'Usage: make predict-llm TEXT="SMS message"' && exit 1)
 	$(DOCKER_RUN) predict-llm --text "$(TEXT)"
