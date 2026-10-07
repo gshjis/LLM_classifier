@@ -1,5 +1,5 @@
 IMAGE ?= spam-classifier
-DOCKER_RUN = docker run --rm -v "$(CURDIR)/data:/app/data" -v "$(CURDIR)/outputs:/app/outputs" $(IMAGE)
+DOCKER_RUN = docker run --rm -v "$(CURDIR)/data:/app/data" -v "$(CURDIR)/outputs:/app/outputs" -v "$(CURDIR)/configs:/app/configs" $(IMAGE)
 TEXT ?=
 
 .PHONY: build test prepare-data train-baselines evaluate-baselines predict-baseline train-llm evaluate-llm predict-llm help
