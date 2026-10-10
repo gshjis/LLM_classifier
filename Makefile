@@ -16,10 +16,11 @@ help:
 	@echo "predict-llm           Predict with TEXT='...'"
 
 build:
-	docker build -t $(IMAGE) .
+	docker build --target runtime -t $(IMAGE) .
 
-test: build
-	docker run --rm --entrypoint pytest $(IMAGE) tests
+test:
+	docker build --target test -t $(IMAGE)-test .
+	docker run --rm $(IMAGE)-test
 
 prepare-data:
 	$(DOCKER_RUN) prepare-data
