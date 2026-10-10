@@ -2,7 +2,7 @@
 # CPU-only torch: install index must include https://download.pytorch.org/whl/cpu
 --extra-index-url https://download.pytorch.org/whl/cpu
 torch==2.14.1+cpu
-accelerate==0.34.1
+accelerate==1.15.0
 aiohappyeyeballs==2.7.1
 aiohttp==3.14.4
 aiosignal==1.4.0
