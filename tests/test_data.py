@@ -25,6 +25,18 @@ def test_load_sms_spam_collection_with_trailing_empty_columns(tmp_path):
     assert set(frame["label"]) == {"spam", "not_spam"}
 
 
+def test_load_dataset_falls_back_to_latin1_encoding(tmp_path):
+    path = tmp_path / "spam.csv"
+    rows = ["v1,v2,,,\n"]
+    rows.extend(f'{label},"message {index} caf\xe9",,,\n' for index, label in enumerate(["ham", "spam"] * 10))
+    path.write_bytes("".join(rows).encode("latin-1"))
+
+    frame = load_dataset(path)
+
+    assert frame.iloc[0]["text"] == "message 0 café"
+    assert set(frame["label"]) == {"spam", "not_spam"}
+
+
 def test_load_dataset_requires_columns(tmp_path):
     path = tmp_path / "bad.csv"
     pd.DataFrame({"email": [f"hello {i}" for i in range(20)], "category": ["spam", "ham"] * 10}).to_csv(path, index=False)

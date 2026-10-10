@@ -15,11 +15,19 @@ LABEL_ALIASES = {
 }
 
 
+def _read_csv(path: Path) -> pd.DataFrame:
+    try:
+        return pd.read_csv(path, encoding="utf-8")
+    except UnicodeDecodeError:
+        # SMS Spam Collection is commonly distributed in latin-1/cp1252.
+        return pd.read_csv(path, encoding="latin-1")
+
+
 def load_dataset(path: str | Path) -> pd.DataFrame:
     path = Path(path)
     if not path.exists():
         raise FileNotFoundError(f"Dataset not found: {path}")
-    frame = pd.read_csv(path)
+    frame = _read_csv(path)
     if {"text", "label"}.issubset(frame.columns):
         frame = frame[["text", "label"]].copy()
     elif {"v1", "v2"}.issubset(frame.columns):
