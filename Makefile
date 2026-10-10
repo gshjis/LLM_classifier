@@ -2,11 +2,12 @@ IMAGE ?= spam-classifier
 DOCKER_RUN = docker run --rm -v "$(CURDIR)/data:/app/data" -v "$(CURDIR)/outputs:/app/outputs" -v "$(CURDIR)/configs:/app/configs" $(IMAGE)
 TEXT ?=
 
-.PHONY: build test prepare-data train-baselines evaluate-baselines predict-baseline train-llm evaluate-llm predict-llm help
+.PHONY: build test download-data prepare-data train-baselines evaluate-baselines predict-baseline train-llm evaluate-llm predict-llm help
 
 help:
 	@echo "build                 Build the Docker image"
 	@echo "test                  Run tests in Docker"
+	@echo "download-data         Download spam.csv into data/raw/spam.csv (via kagglehub)"
 	@echo "prepare-data          Split data/raw/spam.csv into train/validation/test"
 	@echo "train-baselines       Train Naive Bayes and Logistic Regression"
 	@echo "evaluate-baselines    Evaluate baseline models on test set"
@@ -21,6 +22,9 @@ build:
 test:
 	docker build --target test -t $(IMAGE)-test .
 	docker run --rm $(IMAGE)-test
+
+download-data:
+	$(DOCKER_RUN) download-data --output /app/data/raw/spam.csv
 
 prepare-data:
 	$(DOCKER_RUN) prepare-data

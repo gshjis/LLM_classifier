@@ -9,6 +9,7 @@ from llm_classifier.baselines.models import load_model
 from llm_classifier.baselines.train import train_baselines
 from llm_classifier.config import load_config
 from llm_classifier.data import prepare_data
+from llm_classifier.data_download import download_sms_spam_collection
 from llm_classifier.llm.evaluate import evaluate_llm
 from llm_classifier.llm.predict import predict_llm
 from llm_classifier.llm.train import train_llm
@@ -36,6 +37,12 @@ def build_parser() -> argparse.ArgumentParser:
     baseline_predict.add_argument("--model", default="logistic_regression")
     baseline_predict.add_argument("--model-dir", default="outputs/models/baselines")
 
+    download = subparsers.add_parser(
+        "download-data",
+        help="Download dataset into data/raw/spam.csv (via kagglehub)",
+    )
+    download.add_argument("--output", default="data/raw/spam.csv")
+
     llm_predict = subparsers.add_parser("predict-llm")
     llm_predict.add_argument("--text", required=True)
     llm_predict.add_argument("--model-dir", default="outputs/models/llm")
@@ -49,6 +56,9 @@ def main() -> None:
         print("Prepared splits:")
         for name, path in paths.items():
             print(f"  {name}: {path}")
+    elif args.command == "download-data":
+        out = download_sms_spam_collection(output_path=args.output)
+        print(f"Downloaded dataset to: {out}")
     elif args.command in {"train-baselines", "evaluate-baselines"}:
         config = load_config(_config_path(args.config, "configs/baseline.yaml"))
         (train_baselines if args.command == "train-baselines" else evaluate_baselines)(config)
