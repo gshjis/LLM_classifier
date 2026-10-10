@@ -1,6 +1,6 @@
-# syntax=docker/dockerfile:1
 # Мультистейджинг: builder (зависимости + пакет) -> test (pytest) -> runtime (только приложение).
 # Зависимости закреплены в requirements*.txt (сгенерированы из poetry.lock, CPU-only torch).
+# Без BuildKit-синтаксиса (RUN --mount), чтобы сборка работала и на legacy builder.
 
 FROM python:3.12-slim AS builder
 
@@ -10,24 +10,20 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 # 1) Закреплённые зависимости из poetry.lock: слой кешируется, пока не изменится requirements.txt.
-#    В pip-кеш BuildKit ставим mount, чтобы кеш не попадал в образ и ускорял пересборку.
 COPY requirements.txt ./
-RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install --upgrade pip \
+RUN pip install --upgrade pip \
     && pip install -r requirements.txt
 
 # 2) Ставим сам проект (без зависимостей — они уже установлены).
 COPY pyproject.toml README.md ./
 COPY src ./src
-RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install . --no-deps
+RUN pip install . --no-deps
 
 # Стадия тестов: pytest + tests/. В runtime-образ не попадает.
 FROM builder AS test
 
 COPY requirements-dev.txt ./
-RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install -r requirements-dev.txt
+RUN pip install -r requirements-dev.txt
 
 COPY tests ./tests
 
